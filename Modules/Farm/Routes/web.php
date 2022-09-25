@@ -12,8 +12,13 @@
 */
 
 Route::prefix('farm')->group(function() {
-    Route::get('/', 'FarmController@index');
+    Route::get('/', 'FarmController@index'); 
     Route::get('/farm-category', 'CategoryController@getCategory')->name('Category');
+    Route::get('/create-category','CategoryController@create'); 
+    Route::get('/edit-category/{category_id}','CategoryController@getEditForm')->name('Category Form');
+    Route::get('/update-category/{category_id}','CategoryController@updateCategory');
+    Route::get('/delete-category/{category_id}','CategoryController@delete');
+
     Route::get('/plots', 'PlotsController@getPlots')->name('Plots');
     Route::get('/expenses', 'FarmExpensesController@getExpenses')->name('Expenses');
     Route::get('/harvest', 'HarvestController@getHarvest')->name('Harvest');
