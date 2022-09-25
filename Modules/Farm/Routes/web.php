@@ -11,7 +11,7 @@
 |
 */
 
-Route::prefix('farm')->group(function() {
+Route::group(['prefix'=>'farm', 'middleware'=>['auth']],function(){
     Route::get('/', 'FarmController@index'); 
     Route::get('/farm-category', 'CategoryController@getCategory')->name('Category');
     Route::get('/create-category','CategoryController@create'); 
@@ -20,6 +20,11 @@ Route::prefix('farm')->group(function() {
     Route::get('/delete-category/{category_id}','CategoryController@delete');
 
     Route::get('/plots', 'PlotsController@getPlots')->name('Plots');
+    Route::get('/create-plot', 'PlotsController@createPlot');
+    Route::get('/edit-plot/{plot_number}','PlotsController@getPlotEditForm')->name('Edit Plot Form');
+    Route::get('/update-plot/{plot_number}','PlotsController@updatePlotInformation');
+    Route::get('/delete-plot/{plot_number}','PlotsController@delete');
+
     Route::get('/expenses', 'FarmExpensesController@getExpenses')->name('Expenses');
     Route::get('/harvest', 'HarvestController@getHarvest')->name('Harvest');
     Route::get('/new-reports', 'FarmReportsController@getNewReports')->name('New Reports');

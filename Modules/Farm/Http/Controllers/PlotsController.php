@@ -5,6 +5,7 @@ namespace Modules\Farm\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\Farm\Entities\Plot;
 
 class PlotsController extends Controller
 {
@@ -14,66 +15,51 @@ class PlotsController extends Controller
      */
     public function getPlots()
     {
-        return view('farm::plots');
+        return view('farm::plots',[
+            'plots' =>Plot::getPlots()
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
-     * @return Renderable
+     *This function creates plot.
      */
-    public function create()
+    public function createPlot(Request $request)
     {
-        return view('farm::create');
+        $validated = $request->validate([
+            'location'           =>'required',
+            'plot_number'        =>'unique:plots,plot_number',
+            'name_of_plot'       =>'required',
+            'name_of_crop'       =>'required',
+            'number_of_acres'    =>'required',
+            'date_of_allocation' =>'required',
+            'harvest_status'     =>'',
+        ]);
+
+        Plot::addPlot(request()->location,request()->name_of_plot,request()->name_of_crop,request()->number_of_acres,request()->date_of_allocation);
+        return redirect()->back()->with('msg','Operation Successful');
     }
 
     /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
+     * This function gets edit form
      */
-    public function store(Request $request)
-    {
-        //
+    public function getPlotEditForm(){
+        return view('farm::edit_plot_form',[
+            'edit_plot'=>Plot::editPlotForm(request()->plot_number)
+        ]);
     }
 
     /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
+     * This function updates Plot
      */
-    public function show($id)
-    {
-        return view('farm::show');
+    public function updatePlotInformation(){
+        Plot::updatePlot(request()->plot_number,request()->location,request()->name_of_plot,request()->name_of_crop,request()->number_of_acres,request()->date_of_allocation);
+        return redirect('/farm/plots')->with('msg','Operation Successful');
     }
-
     /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
+     * This function deletes Plot
      */
-    public function edit($id)
-    {
-        return view('farm::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
+    public function delete(){
+        Plot::deletePlot(request()->plot_number);
+        return redirect()->back()->with('msg','Operation Successful');
     }
 }
